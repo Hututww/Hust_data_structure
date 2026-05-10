@@ -1,4 +1,4 @@
-# include <stdio.h>
+# include <iostream>
 
 int main(){
     int number = 5;
@@ -22,7 +22,7 @@ int main(){
 
     for (int k = 0; k < number; k++){
         if(a[k] != 0){
-            printf("final survivor index: %d\n", k);
+            std::cout<<"final survivor index: "<<k;
             break;
         }
     }
