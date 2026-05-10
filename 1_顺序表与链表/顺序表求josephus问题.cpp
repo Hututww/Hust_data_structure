@@ -11,18 +11,23 @@ int main(){
         a[i] = 1;
     }
 
-    for (int j = start; removed < number - 1;){
-        j += distance;
+    int j = start; 
+    while(removed < number - 1){
+        j += (distance - 1);
+        j %= number;
         a[j] = 0;
         removed++;
 
         if (j > number) j -=number;
-        while (a[j] = 0) j++;
+        while (a[j] == 0){
+            j++;
+            j %= number;
+        }
     }
 
     for (int k = 0; k < number; k++){
         if(a[k] != 0){
-            std::cout<<"final survivor index: "<<k;
+            std::cout<<"final survivor index: "<<k + 1;     //转换成1开始的序号
             break;
         }
     }
