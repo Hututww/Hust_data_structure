@@ -9,28 +9,21 @@ std::vector<int> buildNext(std::string sub){
     if(sub.size() == 1) return next;
     
     next[1] = 1;
+    int matchLen = 0;
     for (int i = 2; i < sub.size(); ++i){
-        int maxLen = 0;
-        for (int len = i - 1; len >= 1; --len){
-            bool same = true;
-            for (int k = 0; k < len; ++k){
-                if (sub[k] != sub[i - len + k]){
-                    same = false;
-                    break;
-                }
-            }
-            if (same){
-                maxLen = len;
-                break;
-            }
+        while (matchLen > 0 && sub[i - 1] != sub[matchLen]){
+            matchLen = next[matchLen] - 1;
         }
-        next[i] = maxLen + 1;
+        if (sub[i - 1] == sub[matchLen]){
+            matchLen++;
+        }
+        next[i] = matchLen + 1;
     }
     return next;
 }
 
 void KMP(std::string &full, std::string &sub){
-    bool found = 0;
+    // bool found = 0;
 
     int i = 0;
     int j = 0;
@@ -41,7 +34,7 @@ void KMP(std::string &full, std::string &sub){
             i++;
             j++;
             if (j == sub.size()){
-                found = 1;
+                // found = 1;
                 break;
             }
         } else if (j > 0){
@@ -51,9 +44,9 @@ void KMP(std::string &full, std::string &sub){
         }
     }
 
-    if(!found) {
-        std::cout << "pairing failed" << std::endl;
-    } 
+    // if(!found) {
+    //     std::cout << "pairing failed" << std::endl;
+    // } 
 }
 
 int main(){
