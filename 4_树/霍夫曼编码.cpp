@@ -16,31 +16,72 @@ struct HuffmanNode{
     HuffmanNode(char d, double w) : data(d), weight(w), left(nullptr), right(nullptr) {}
 };
 
-struct Compare{
-    bool operator()(HuffmanNode* l, HuffmanNode* r) {
-        return l->weight > r->weight;
-    }
-};
+// struct Compare{
+//     bool operator()(HuffmanNode* l, HuffmanNode* r) {
+//         return l->weight > r->weight;
+//     }
+// };
+
+// HuffmanNode* buildHuffmanTree(std::map<char, double>& frequencies) {
+//     std::priority_queue<HuffmanNode*, std::vector<HuffmanNode*>, Compare> pq;
+
+//     for (auto [ch, freq] : frequencies){
+//         pq.push(new HuffmanNode(ch, freq));
+//     }
+
+//     while (pq.size() > 1){
+//         HuffmanNode *left = pq.top(); 
+//         pq.pop();
+//         HuffmanNode *right = pq.top(); 
+//         pq.pop();
+
+//         HuffmanNode *parent = new HuffmanNode('\0', left->weight + right->weight);
+//         parent->left = left;
+//         parent->right = right;
+//         pq.push(parent);
+//     }
+//     return pq.top();
+// }
 
 HuffmanNode* buildHuffmanTree(std::map<char, double>& frequencies) {
-    std::priority_queue<HuffmanNode*, std::vector<HuffmanNode*>, Compare> pq;
-
-    for (auto [ch, freq] : frequencies){
-        pq.push(new HuffmanNode(ch, freq));
+    std::vector<HuffmanNode*> nodes;
+    for (auto &p : frequencies){
+        nodes.push_back(new HuffmanNode(p.first, p.second));
     }
 
-    while (pq.size() > 1){
-        HuffmanNode *left = pq.top(); 
-        pq.pop();
-        HuffmanNode *right = pq.top(); 
-        pq.pop();
+    while (nodes.size() > 1) {
+        int min = 0, lessMin = 1;
+        if (nodes[lessMin]->weight < nodes[min]->weight) std::swap(min, lessMin);
+        for (int i = 2; i < nodes.size(); ++i) {
+            if (nodes[i]->weight < nodes[min]->weight) {
+                lessMin = min;
+                min = i;
+            } else if (nodes[i]->weight < nodes[lessMin]->weight) {
+                lessMin = i;
+            }
+        }
 
+
+        
+        HuffmanNode *left = nodes[min];
+        HuffmanNode *right = nodes[lessMin];
         HuffmanNode *parent = new HuffmanNode('\0', left->weight + right->weight);
         parent->left = left;
         parent->right = right;
-        pq.push(parent);
+
+        if (min > lessMin) std::swap(min, lessMin);
+        nodes.erase(nodes.begin() + lessMin);
+        nodes.erase(nodes.begin() + min);
+        nodes.push_back(parent);
     }
-    return pq.top();
+    return nodes.empty() ? nullptr : nodes.front();
+}
+
+void deleteTree(HuffmanNode* node) {
+    if (!node) return;
+    deleteTree(node->left);
+    deleteTree(node->right);
+    delete node;
 }
 
 void generateCode(HuffmanNode* node, std::string code, std::map<char, std::string>& huffmanCodes) {
@@ -68,7 +109,7 @@ int main() {
     for (auto [ch, code] : huffmanCodes){
         std::cout<<ch<<": "<<code<<std::endl;
     }
-    delete root;
+    deleteTree(root);
 
     return 0;
 }
